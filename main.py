@@ -15,7 +15,7 @@ import shutil
 import keyboard
 import pydirectinput as pyd
 import pyautogui
-
+from tkinter import messagebox
 
 window= tk.Tk()
 window.title("PDF 변환기")
@@ -36,7 +36,11 @@ def temp_text(e):
 
 
 #마우스 좌표 저장 변수
-
+global x1
+global y1
+global x2
+global y2
+x1=x2=y1=y2=-1
 def get_pointer_coo(n):
     
     global x1
@@ -63,13 +67,25 @@ def get_pointer_pass(n,input):
         adress_label1.configure(text=("왼쪽 상단 좌표 : "+x1+" , "+y1))
     else:
         x2,y2=(str(input).split(","))
-        adress_label1.configure(text=("왼쪽 상단 좌표 : "+x2+" , "+y2))
+        adress_label2.configure(text=("오른쪽 하단 좌표 : "+x2+" , "+y2))
     
     x1=int(x1)
     x2=int(x2)
     y1=int(y1)
     y1=int(y2)
 
+def fullscreen_adress():
+    global x1
+    global y1
+    global x2
+    global y2
+    if(full_screen.get()):
+        width, height = pyautogui.size()
+        x1=y1=0
+        x2=width
+        y2=height    
+    adress_label1.configure(text=("왼쪽 상단 좌표 : "+str(x1)+" , "+str(y1)))
+    adress_label2.configure(text=("오른쪽 하단 : "+str(x2)+" , "+str(y2)))
 
 
 #오른쪽 좌표
@@ -132,7 +148,8 @@ auto_check=tk.Checkbutton(window,text="자동 화면 전환",variable=auto,font=
 
 ######전체화면 캡쳐 모드 
 full_screen=tk.IntVar()
-full_screen_check=tk.Checkbutton(window,text="전체 화면 캡쳐",variable=full_screen,font=("Arial",10),height=2)
+full_screen_check=tk.Checkbutton(window,text="전체 화면 캡쳐",variable=full_screen,font=("Arial",10),height=2,command=lambda:fullscreen_adress())
+
 
 ###캡쳐 함수
 def capchar(i):
@@ -149,58 +166,62 @@ def capchar(i):
 
 #mode = 1 은 수동 
 def action():
-    global x1
-    global y1
-    global x2
-    global y2
-    if(full_screen.get()):
-        width, height = pyautogui.size()
-        x1=y1=0
-        x2=width
-        y2=height
 
-    if(os.path.exists(file_name+"/png")):
-        shutil.rmtree(file_name+"/png")
-    global image_list
-    image_list=[]
-   
-   
-    print("변환시작")
+    if( x1==-1 or x2==-1 or y1 ==-1 or y2==-1 or y1>=y2 or x1>=x2):
+        messagebox.showerror("오류","좌표설정을 다시해주세요")
+        return
+        
+    try:
+        
+        if(file_name==None):
+            tk.messagebox.showinfo("제목", "여기에 메시지를 입력하세요.")
+        
+        if(os.path.exists(file_name+"/png")):
+            shutil.rmtree(file_name+"/png")
+        global image_list
+        image_list=[]
     
-    os.mkdir(file_name+"/png")
+    
+        print("변환시작")
 
-    if(auto.get()==0):
-        print("수동모드 진입")
-        i=0
-        while(True):
-            if(keyboard.is_pressed("right")):
-                time.sleep(1)
-                capchar(i)
-                i+=2
-            elif(keyboard.is_pressed("Escape")):
-                break
-    else:
-        print("자동모드 진입")
-        while(True):
-            if(keyboard.is_pressed("s")):
-                print("캡쳐시작")
-                break
-        for j in range(0,page+1,2):
-            if(keyboard.is_pressed("Escape")):
-                break
-            time.sleep(random.uniform(1,1.8))
-            pyd.press("right")
-            capchar(j)
+        os.mkdir(file_name+"/png")
 
-    print("캡쳐 종료")
-    with open(file_name+"/out.pdf","wb") as f:
-        pdf = convert(image_list)
-        f.write(pdf)
-    shutil.rmtree(file_name+"/png")
+        if(auto.get()==0):
+            print("수동모드 진입")
+            i=0
+            while(True):
+                if(keyboard.is_pressed("right")):
+                    time.sleep(1)
+                    capchar(i)
+                    i+=2
+                elif(keyboard.is_pressed("Escape")):
+                    break
+        else:
+            print("자동모드 진입")
+            while(True):
+                if(keyboard.is_pressed("s")):
+                    print("캡쳐시작")
+                    break
+            for j in range(0,page+1,2):
+                if(keyboard.is_pressed("Escape")):
+                    break
+                time.sleep(random.uniform(1,1.8))
+                pyd.press("right")
+                capchar(j)
+
+        print("캡쳐 종료")
+        with open(file_name+"/out.pdf","wb") as f:
+            pdf = convert(image_list)
+            f.write(pdf)
+        shutil.rmtree(file_name+"/png")
+    except NameError:
+        messagebox.showerror("오류","저장할 파일을 지정해주세요")
+
         
 
 ######변환 시작 버튼
 action_button=tk.Button(window,text="변환 시작",bg="gray",height=3,command=lambda:action())
+
 
 #왼쪽 좌표 설정 버튼 및 라벨
 left_coordinate.grid(row=1,column=0,sticky='news')

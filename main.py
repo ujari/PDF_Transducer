@@ -16,6 +16,7 @@ import keyboard
 import pydirectinput as pyd
 import pyautogui
 from tkinter import messagebox
+import re
 
 window= tk.Tk()
 window.title("PDF 변환기")
@@ -62,17 +63,26 @@ def get_pointer_pass(n,input):
     global y1
     global x2
     global y2
-    if(n==0):
-        x1,y1=(str(input).split(","))
-        adress_label1.configure(text=("왼쪽 상단 좌표 : "+x1+" , "+y1))
-    else:
-        x2,y2=(str(input).split(","))
-        adress_label2.configure(text=("오른쪽 하단 좌표 : "+x2+" , "+y2))
+
+    pattern = r'^\d{0,5}(,\d{0,5})*$'
+
+# 입력값이 패턴과 일치하는지 확인
+    if re.match(pattern, input):
+        if(n==0):
+            x1,y1=(str(input).split(","))
+            adress_label1.configure(text=("왼쪽 상단 좌표 : "+x1+" , "+y1))
+        else:
+            x2,y2=(str(input).split(","))
+            adress_label2.configure(text=("오른쪽 하단 좌표 : "+x2+" , "+y2))
     
-    x1=int(x1)
-    x2=int(x2)
-    y1=int(y1)
-    y1=int(y2)
+        x1=int(x1)
+        x2=int(x2)
+        y1=int(y1)
+        y1=int(y2)
+    else:
+        messagebox.showerror("오류","좌표를 다시 입력해주세요.")
+
+    
 
 def fullscreen_adress():
     global x1
@@ -131,8 +141,12 @@ file_label = tk.Label(window,wraplength=480)
 ######페이지 입력 GUI
 def confirm():
     global page
-    page=int(input.get())
-    input_label.configure(text=("page:"+str(page)))
+    try:
+        page=int(input.get())
+        input_label.configure(text=("page:"+str(page)))
+    except ValueError:
+        messagebox.showerror("오류","페이지 수를 다시 입력해주세요.")
+
 
 input= tk.Entry(window,width=10)
 input.insert(0,"자동모드시 입력")
@@ -201,7 +215,7 @@ def action():
             while(True):
                 if(keyboard.is_pressed("right")):
                     time.sleep(1)
-                    if(capchar_page_mode):
+                    if(capchar_page_mode==0):
                         capchar(i,capchar_page_mode) 
                         i+=2
                     else:
@@ -216,7 +230,7 @@ def action():
                 if(keyboard.is_pressed("s")):
                     print("캡쳐시작")
                     break
-            if(capchar_page_mode):
+            if(capchar_page_mode==0):
                 for j in range(0,page+1,2):
                     if(keyboard.is_pressed("Escape")):
                         break

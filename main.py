@@ -90,13 +90,13 @@ def fullscreen_adress():
 
 #오른쪽 좌표
 right_coordinate=tk.Button(window,text="오른쪽 하단 좌표 감지",command=lambda:get_pointer_coo(1))
-right_g=tk.Label(window,text="좌표입력")
+right_g=tk.Label(window,text="좌표입력 :")
 right_input=tk.Entry(window,width=10)
 right_input_b=tk.Button(window,text="확인",command=lambda:get_pointer_pass(1,right_input.get()))
 
-#왼쪽 좌표
+#왼쪽 좌표        
 left_coordinate=tk.Button(window,text="왼쪽 상단 좌표 감지",command=lambda:get_pointer_coo(0))
-left_g=tk.Label(window,text="좌표입력")
+left_g=tk.Label(window,text="좌표입력 :")
 left_input=tk.Entry(window,width=10)
 left_input_b=tk.Button(window,text="확인",command=lambda:get_pointer_pass(0,left_input.get()))
 
@@ -150,19 +150,28 @@ auto_check=tk.Checkbutton(window,text="자동 화면 전환",variable=auto,font=
 full_screen=tk.IntVar()
 full_screen_check=tk.Checkbutton(window,text="전체 화면 캡쳐",variable=full_screen,font=("Arial",10),height=2,command=lambda:fullscreen_adress())
 
+######캡쳐 장수 모드 설정 
+capchar_page=tk.IntVar()
+capchar_page_check=tk.Checkbutton(window,text="한장 캡쳐",variable=capchar_page,font=("Arial",10),height=2)
+
 
 ###캡쳐 함수
-def capchar(i):
-
-    screenshot1 = PIL.ImageGrab.grab(bbox=(x1,y1,x1+((x2-x1)//2),y2))
-    screenshot1 = PIL.ImageGrab.grab(bbox=(x1,y1,x1+((x2-x1)//2),y2))
-    screenshot1.save(file_name+"/png"+f"/screenshot{i}.png")
-    screenshot2 = PIL.ImageGrab.grab(bbox=(x1+((x2-x1)//2),y1,x2,y2))
-    screenshot2 = PIL.ImageGrab.grab(bbox=(x1+((x2-x1)//2),y1,x2,y2))
-    screenshot2.save(file_name+"/png"+f"/screenshot{i+1}.png")
-    #insert
-    image_list.append(file_name+"/png"+f"/screenshot{i}.png")
-    image_list.append(file_name+"/png"+f"/screenshot{i+1}.png")
+def capchar(i,mode):#mode 0은 두장모드
+    if(mode==0):#두장모드
+        screenshot1 = PIL.ImageGrab.grab(bbox=(x1,y1,x1+((x2-x1)//2),y2))
+        screenshot1 = PIL.ImageGrab.grab(bbox=(x1,y1,x1+((x2-x1)//2),y2))
+        screenshot1.save(file_name+"/png"+f"/screenshot{i}.png")
+        screenshot2 = PIL.ImageGrab.grab(bbox=(x1+((x2-x1)//2),y1,x2,y2))
+        screenshot2 = PIL.ImageGrab.grab(bbox=(x1+((x2-x1)//2),y1,x2,y2))
+        screenshot2.save(file_name+"/png"+f"/screenshot{i+1}.png")
+        #insert
+        image_list.append(file_name+"/png"+f"/screenshot{i}.png")
+        image_list.append(file_name+"/png"+f"/screenshot{i+1}.png")
+    else:
+        screenshot1 = PIL.ImageGrab.grab(bbox=(x1,y1,x2,y2))
+        screenshot1.save(file_name+"/png"+f"/screenshot{i}.png")
+        #insert
+        image_list.append(file_name+"/png"+f"/screenshot{i}.png")
 
 #mode = 1 은 수동 
 def action():
@@ -185,15 +194,20 @@ def action():
         print("변환시작")
 
         os.mkdir(file_name+"/png")
-
+        capchar_page_mode=capchar_page.get()
         if(auto.get()==0):
             print("수동모드 진입")
             i=0
             while(True):
                 if(keyboard.is_pressed("right")):
                     time.sleep(1)
-                    capchar(i)
-                    i+=2
+                    if(capchar_page_mode):
+                        capchar(i,capchar_page_mode) 
+                        i+=2
+                    else:
+                        capchar(i,capchar_page_mode) 
+                        i+=1
+
                 elif(keyboard.is_pressed("Escape")):
                     break
         else:
@@ -202,12 +216,20 @@ def action():
                 if(keyboard.is_pressed("s")):
                     print("캡쳐시작")
                     break
-            for j in range(0,page+1,2):
-                if(keyboard.is_pressed("Escape")):
-                    break
-                time.sleep(random.uniform(1,1.8))
-                pyd.press("right")
-                capchar(j)
+            if(capchar_page_mode):
+                for j in range(0,page+1,2):
+                    if(keyboard.is_pressed("Escape")):
+                        break
+                    time.sleep(random.uniform(1,1.8))
+                    pyd.press("right")
+                    capchar(j, capchar_page_mode)
+            else:
+                for j in range(0,page+1,1):
+                    if(keyboard.is_pressed("Escape")):
+                        break
+                    time.sleep(random.uniform(1,1.8))
+                    pyd.press("right")
+                    capchar(j, capchar_page_mode)
 
         print("캡쳐 종료")
         with open(file_name+"/out.pdf","wb") as f:
@@ -221,7 +243,6 @@ def action():
 
 ######변환 시작 버튼
 action_button=tk.Button(window,text="변환 시작",bg="gray",height=3,command=lambda:action())
-
 
 #왼쪽 좌표 설정 버튼 및 라벨
 left_coordinate.grid(row=1,column=0,sticky='news')
@@ -245,13 +266,15 @@ file_label.grid(row=5,column=1,columnspan=4,sticky='news')
 full_screen_check.grid(row=6,column=0,sticky='news')
 
 #화면 전환 모드 체크박스
-auto_check.grid(row=7,column=0,sticky='news')
+auto_check.grid(row=6,column=1,sticky='news')
 
+#캡쳐 한장 모드 체크박스 
+capchar_page_check.grid(row=6,column=2,sticky='news')
 
 #페이지 수 설정 버튼 및 라벨
-input_label.grid(row=7,column=1,sticky='news')
-input.grid(row=7,column=2,sticky='news')
-input_button.grid(row=7,column=3,sticky='news')
+input_label.grid(row=7,column=0,sticky='news')
+input.grid(row=7,column=1,sticky='news')
+input_button.grid(row=7,column=2,sticky='news')
 
 #변환 시작 버튼
 action_button.grid(row=8,column=0,columnspan=4,sticky='news')

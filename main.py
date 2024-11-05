@@ -1,6 +1,6 @@
 #프로그램명 : pdf변환기
 #작성자 : 최윤호
-#최종 수정일 : 2024_11_03
+#최종 수정일 : 2024_11_05
 
 import ctypes
 ctypes.windll.shcore.SetProcessDpiAwareness(2)

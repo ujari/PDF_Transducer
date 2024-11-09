@@ -28,12 +28,8 @@ intro_label.grid(row=0,column=0,columnspan=4,sticky='news')
 
 #예제 메세지 삭제
 def temp_text(e):
-    if e.widget == left_input:
-        left_input.delete(0, "end")
-    elif e.widget == right_input:
-        right_input.delete(0, "end")
-    elif e.widget== input:
-        input.delete(0, "end")
+     e.delete(0, "end")
+
 
 
 #마우스 좌표 저장 변수
@@ -120,12 +116,11 @@ def confirm():
 
 ###캡쳐 함수
 def capchar(i,mode):#mode 0은 두장모드
+    capchar_x=x1+((x2-x1)//2)
     if(mode==0):#두장모드
-        screenshot1 = PIL.ImageGrab.grab(bbox=(x1,y1,x1+((x2-x1)//2),y2))
-        screenshot1 = PIL.ImageGrab.grab(bbox=(x1,y1,x1+((x2-x1)//2),y2))
+        screenshot1 = PIL.ImageGrab.grab(bbox=(x1,y1,capchar_x,y2))
         screenshot1.save(file_name+"/png"+f"/screenshot{i}.png")
-        screenshot2 = PIL.ImageGrab.grab(bbox=(x1+((x2-x1)//2),y1,x2,y2))
-        screenshot2 = PIL.ImageGrab.grab(bbox=(x1+((x2-x1)//2),y1,x2,y2))
+        screenshot2 = PIL.ImageGrab.grab(bbox=(capchar_x,y1,x2,y2))
         screenshot2.save(file_name+"/png"+f"/screenshot{i+1}.png")
         #insert
         image_list.append(file_name+"/png"+f"/screenshot{i}.png")
@@ -164,12 +159,8 @@ def action():
             while(True):
                 if(keyboard.is_pressed("right")):
                     time.sleep(1)
-                    if(capchar_page_mode==0):
-                        capchar(i,capchar_page_mode) 
-                        i+=2
-                    else:
-                        capchar(i,capchar_page_mode) 
-                        i+=1
+                    capchar(i, capchar_page_mode)
+                    i += 2 if capchar_page_mode == 0 else 1
 
                 elif(keyboard.is_pressed("Escape")):
                     break

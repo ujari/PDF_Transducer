@@ -97,32 +97,6 @@ def fullscreen_adress():
     adress_label1.configure(text=("왼쪽 상단 좌표 : "+str(x1)+" , "+str(y1)))
     adress_label2.configure(text=("오른쪽 하단 : "+str(x2)+" , "+str(y2)))
 
-
-#오른쪽 좌표
-right_coordinate=tk.Button(window,text="오른쪽 하단 좌표 감지",command=lambda:get_pointer_coo(1))
-right_g=tk.Label(window,text="좌표입력 :")
-right_input=tk.Entry(window,width=10)
-right_input_b=tk.Button(window,text="확인",command=lambda:get_pointer_pass(1,right_input.get()))
-
-#왼쪽 좌표        
-left_coordinate=tk.Button(window,text="왼쪽 상단 좌표 감지",command=lambda:get_pointer_coo(0))
-left_g=tk.Label(window,text="좌표입력 :")
-left_input=tk.Entry(window,width=10)
-left_input_b=tk.Button(window,text="확인",command=lambda:get_pointer_pass(0,left_input.get()))
-
-
-#예제 텍스트 삽입
-left_input.insert(0, "ex)10,10")
-right_input.insert(0, "ex)10,10")
-
-#예제 텍스트 삭제
-left_input.bind("<FocusIn>", temp_text)
-right_input.bind("<FocusIn>", temp_text)
-
-#좌표값 출력
-adress_label1=tk.Label(window,text="왼쪽 상단 좌표 : ",pady=5)
-adress_label2=tk.Label(window,text="오른쪽 하단 좌표 : ",pady=5)
-
 ######파일 주소 저장 GUI
 def fileClick():
     global file_name
@@ -130,10 +104,6 @@ def fileClick():
         title="파일 선택창",
         )
     file_label.configure(text=file_name)
-
-
-file_bu=tk.Button(window,text="저장할 파일 선택",width=20,command=lambda:fileClick())
-file_label = tk.Label(window,wraplength=480)
 
 ########################
 
@@ -146,27 +116,6 @@ def confirm():
         input_label.configure(text=("page:"+str(page)))
     except ValueError:
         messagebox.showerror("오류","페이지 수를 다시 입력해주세요.")
-
-
-input= tk.Entry(window,width=10)
-input.insert(0,"자동모드시 입력")
-input.bind("<FocusIn>", temp_text)
-input_label=tk.Label(window,text="page:")
-input_button=tk.Button(window,text="확인",command=lambda:confirm())
-###########
-
-#######모드 체크박스
-auto=tk.IntVar()
-auto_check=tk.Checkbutton(window,text="자동 화면 전환",variable=auto,font=("Arial",10),height=2)
-#############
-
-######전체화면 캡쳐 모드 
-full_screen=tk.IntVar()
-full_screen_check=tk.Checkbutton(window,text="전체 화면 캡쳐",variable=full_screen,font=("Arial",10),height=2,command=lambda:fullscreen_adress())
-
-######캡쳐 장수 모드 설정 
-capchar_page=tk.IntVar()
-capchar_page_check=tk.Checkbutton(window,text="한장 캡쳐",variable=capchar_page,font=("Arial",10),height=2)
 
 
 ###캡쳐 함수
@@ -253,44 +202,75 @@ def action():
     except NameError:
         messagebox.showerror("오류","저장할 파일을 지정해주세요")
 
-        
+    
+###############  GUI 구성  ###############
 
-######변환 시작 버튼
-action_button=tk.Button(window,text="변환 시작",bg="gray",height=3,command=lambda:action())
+# 좌표 GUI
+left_coordinate = tk.Button(window, text="왼쪽 상단 좌표 감지", command=lambda: get_pointer_coo(0))
+left_input = tk.Entry(window, width=10) 
+left_input.insert(0, "ex)10,10")
+left_input.bind("<FocusIn>", temp_text)
+left_g=tk.Label(window,text="좌표입력 :")
+left_input_b = tk.Button(window, text="확인", command=lambda: get_pointer_pass(0, left_input.get()))
 
-#왼쪽 좌표 설정 버튼 및 라벨
-left_coordinate.grid(row=1,column=0,sticky='news')
-left_g.grid(row=1,column=1,sticky='news')
-left_input.grid(row=1,column=2,sticky='news')
-left_input_b.grid(row=1,column=3,sticky='news')
-adress_label1.grid(row=2,column=0,columnspan=3,sticky='news')
+right_coordinate = tk.Button(window, text="오른쪽 하단 좌표 감지", command=lambda: get_pointer_coo(1))
+right_input = tk.Entry(window, width=10)
+right_input.insert(0, "ex)10,10")
+right_input.bind("<FocusIn>", temp_text)
+right_g=tk.Label(window,text="좌표입력 :")
+right_input_b = tk.Button(window, text="확인", command=lambda: get_pointer_pass(1, right_input.get()))
 
-#오른쪽 좌표 설정 버튼 및 라벨
-right_coordinate.grid(row=3,column=0,sticky='news')
-right_g.grid(row=3,column=1,sticky='news')
-right_input.grid(row=3,column=2,sticky='news')
-right_input_b.grid(row=3,column=3,sticky='news')
-adress_label2.grid(row=4,column=0,columnspan=3)
+adress_label1 = tk.Label(window, text="왼쪽 상단 좌표 : ", pady=5)
+adress_label2 = tk.Label(window, text="오른쪽 하단 좌표 : ", pady=5)
 
-#저장 경로 설정 버튼 및 라벨
-file_bu.grid(row=5,column=0,sticky='news')
-file_label.grid(row=5,column=1,columnspan=4,sticky='news')
+# 파일 GUI
+file_bu = tk.Button(window, text="저장할 파일 선택", width=20, command=lambda: fileClick())
+file_label = tk.Label(window, wraplength=480)
 
-#전체화면 캡쳐 모드 체크박스
-full_screen_check.grid(row=6,column=0,sticky='news')
+# 페이지수 GUI
+input = tk.Entry(window, width=10)
+input.insert(0, "자동모드시 입력")
+input.bind("<FocusIn>", temp_text)
+input_label = tk.Label(window, text="page:")
+input_button = tk.Button(window, text="확인", command=lambda: confirm())
 
-#화면 전환 모드 체크박스
-auto_check.grid(row=6,column=1,sticky='news')
+# 모드 체크박스 GUI
+auto = tk.IntVar()
+auto_check = tk.Checkbutton(window, text="자동 화면 전환", variable=auto, font=("Arial", 10), height=2) # 자동 화면 전환 체크박스
 
-#캡쳐 한장 모드 체크박스 
-capchar_page_check.grid(row=6,column=2,sticky='news')
+full_screen = tk.IntVar()
+full_screen_check = tk.Checkbutton(window, text="전체 화면 캡쳐", variable=full_screen, font=("Arial", 10), height=2, command=lambda: fullscreen_adress()) # 전체 화면 캡쳐 체크박스
 
-#페이지 수 설정 버튼 및 라벨
-input_label.grid(row=7,column=0,sticky='news')
-input.grid(row=7,column=1,sticky='news')
-input_button.grid(row=7,column=2,sticky='news')
+capchar_page = tk.IntVar()
+capchar_page_check = tk.Checkbutton(window, text="한장 캡쳐", variable=capchar_page, font=("Arial", 10), height=2) # 한장 캡쳐 체크박스
 
-#변환 시작 버튼
-action_button.grid(row=8,column=0,columnspan=4,sticky='news')
+# 변환 시작 버튼 GUI
+action_button = tk.Button(window, text="변환 시작", bg="gray", height=3, command=lambda: action())
+
+# 레이아웃 설정
+left_input.grid(row=1, column=2, sticky='news')
+left_input_b.grid(row=1, column=3, sticky='news')
+left_coordinate.grid(row=1, column=0, sticky='news')
+left_g.grid(row=1, column=1, sticky='news')
+adress_label1.grid(row=2, column=0, columnspan=3, sticky='news')
+
+right_input.grid(row=3, column=2, sticky='news')
+right_input_b.grid(row=3, column=3, sticky='news')
+right_coordinate.grid(row=3, column=0, sticky='news')
+right_g.grid(row=3, column=1, sticky='news')
+adress_label2.grid(row=4, column=0, columnspan=3)
+
+file_bu.grid(row=5, column=0, sticky='news')
+file_label.grid(row=5, column=1, columnspan=4, sticky='news')
+
+full_screen_check.grid(row=6, column=0, sticky='news')
+auto_check.grid(row=6, column=1, sticky='news')
+capchar_page_check.grid(row=6, column=2, sticky='news')
+
+input_label.grid(row=7, column=0, sticky='news')
+input.grid(row=7, column=1, sticky='news')
+input_button.grid(row=7, column=2, sticky='news')
+
+action_button.grid(row=8, column=0, columnspan=4, sticky='news')
 
 window.mainloop()

@@ -1,12 +1,13 @@
 #프로그램명 : pdf변환기
 #작성자 : 최윤호
-#최종 수정일 : 2024_11_05
+#최종 수정일 : 2024_11_11
 
 import ctypes
 ctypes.windll.shcore.SetProcessDpiAwareness(2)
 import PIL
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import *
+from tkinter import filedialog,messagebox
 import time
 from img2pdf import convert
 import random
@@ -15,7 +16,6 @@ import shutil
 import keyboard
 import pydirectinput as pyd
 import pyautogui
-from tkinter import messagebox
 import re
 
 window= tk.Tk()
@@ -184,6 +184,10 @@ def action():
                     time.sleep(random.uniform(1,1.8))
                     pyd.press("right")
                     capchar(j, capchar_page_mode)
+                    window.wm_attributes("-topmost",1)
+                    window.wm_attributes("-topmost",0)
+                    messagebox.showerror("알림","변환이 완료되었습니다.")
+
 
         print("캡쳐 종료")
         with open(file_name+"/out.pdf","wb") as f:

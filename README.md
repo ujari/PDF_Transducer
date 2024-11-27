@@ -30,3 +30,10 @@
    - 한장 모드를 체크하시면 한장을 캡쳐하며 체크를 해지하시면 두장 페이지를 한번에 캡쳐할 수 있습니다.
 
 <img src="https://github.com/user-attachments/assets/90d1a8e9-9a72-48b1-b7cd-f74f89a97422" alt="sdsddsd" width="400"/>
+
+-------------------------------
+### Contributors 🙌
+
+Thanks to all contributors who have helped make this project better!
+
+- **[minsu MOK](https://github.com/mokminsu)** - Code Contributions
